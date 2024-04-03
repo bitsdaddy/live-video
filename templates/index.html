@@ -69,7 +69,8 @@
         <h1>Live streaming</h1>
         <div class="monitor">
             <div class="monitor-screen">
-                <img src="{{ url_for('video') }}" class="img-fluid" />
+                <!-- Embed Streamlit camera input here -->
+                {{ to_streamlit_component(url_for('streamlit_camera')) | safe }}
             </div>
             <div class="monitor-base"></div>
             <div class="stand"></div>
