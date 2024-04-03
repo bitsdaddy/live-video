@@ -69,8 +69,7 @@
         <h1>Live streaming</h1>
         <div class="monitor">
             <div class="monitor-screen">
-                <!-- Embed Streamlit camera input here -->
-                {{ to_streamlit_component(url_for('streamlit_camera')) | safe }}
+                <img src="{{ url_for('video') }}" class="img-fluid" />
             </div>
             <div class="monitor-base"></div>
             <div class="stand"></div>
@@ -78,5 +77,47 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        // Get access to the webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function(err) {
+                console.log("An error occurred: " + err);
+            });
+
+        // Function to capture frame from video and send to server
+        function captureFrame() {
+            var video = document.getElementById('video');
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imgData = canvas.toDataURL('image/jpeg');
+            
+            // Send frame to server using fetch or XMLHttpRequest
+            fetch('/upload_frame', {
+                method: 'POST',
+                body: JSON.stringify({ frame: imgData }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                console.log("Frame uploaded successfully");
+            })
+            .catch(function(err) {
+                console.error("Error uploading frame: " + err);
+            });
+        }
+
+        // Capture and send frame every 100 milliseconds (adjust as needed)
+        setInterval(captureFrame, 100);
+    </script>
 </body>
 </html>
