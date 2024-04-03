@@ -38,3 +38,5 @@ typing_extensions==4.10.0
 urllib3==2.2.1
 Werkzeug==3.0.1
 wrapt==1.16.0
+streamlit==1.10.0
+streamlit-webrtc==0.20.0
